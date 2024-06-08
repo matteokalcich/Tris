@@ -19,11 +19,13 @@ class _TrisState extends State<Tris> {
   // Variabile che tiene traccia del giocatore corrente (0 ==> O, 1 ==> X)
   late int currentPlayer;
 
+  bool won = false;
+
   late GridView tab;
 
   final controller = ConfettiController();
 
-  final dbReference = FirebaseDatabase.instance.reference();
+  final dbReference = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
@@ -124,20 +126,15 @@ class _TrisState extends State<Tris> {
 
         // Controlla se il giocatore corrente ha vinto
         if (checkWinner(currentPlayertoString())) {
-          // Mostra un messaggio di vittoria
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Ha vinto ${currentPlayertoString()}'),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          won = true;
 
           controller.play();
-          Future.delayed(Duration(seconds: 3), () {
+          Future.delayed(const Duration(seconds: 3), () {
             controller.stop();
             restartGame();
           });
         } else {
+          won = false;
           // Cambia il giocatore corrente
           currentPlayer = (currentPlayer + 1) % 2;
         }
@@ -178,12 +175,22 @@ class _TrisState extends State<Tris> {
         ),
       );
     } else {
-      return const Text(
-        'HA VINTO ',
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 40,
-        ),
+      return const Text('');
+    }
+  }
+
+  ElevatedButton restartBtn() {
+    if (won) {
+      return ElevatedButton(
+        onPressed: () {
+          restartGame();
+        },
+        child: const Text('Rigioca'),
+      );
+    } else {
+      return ElevatedButton(
+        onPressed: () {},
+        child: const Text(''),
       );
     }
   }
@@ -221,20 +228,15 @@ class _TrisState extends State<Tris> {
 
                 child: tab = tabella(),
               ),
-              ConfettiWidget(
+              /*ConfettiWidget(
                 confettiController: controller,
                 shouldLoop: false,
                 blastDirection: pi,
-              ),
+              ),*/
               const SizedBox(
                 height: 50,
               ),
-              ElevatedButton(
-                onPressed: () {
-                  restartGame();
-                },
-                child: const Text('Rigioca'),
-              ),
+              restartBtn(),
             ],
           ),
         ),
