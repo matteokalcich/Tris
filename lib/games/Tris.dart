@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -55,6 +54,34 @@ class _TrisState extends State<Tris> {
     }
   }
 
+  void updateDB() async {
+    try {
+      Map<String, dynamic> cellsData = {};
+
+      for (int i = 0; i < celle.length; i++) {
+        cellsData['cella $i'] = celle[i];
+      }
+      await dbReference.child("tris").set(cellsData);
+      print("Record aggiunto");
+    } catch (e) {
+      print("Record non aggiunto: $e");
+    }
+  }
+
+  void resetDB() async {
+    try {
+      Map<String, dynamic> cellsData = {};
+
+      for (int i = 0; i < celle.length; i++) {
+        cellsData['cella $i'] = celle[i];
+      }
+      await dbReference.child("tris").set(cellsData);
+      print("Record aggiunto");
+    } catch (e) {
+      print("Record non aggiunto: $e");
+    }
+  }
+
   String currentPlayertoString() {
     return currentPlayer == 0 ? 'O' : 'X';
   }
@@ -63,6 +90,7 @@ class _TrisState extends State<Tris> {
     setState(() {
       currentPlayer = currentPlayer == 0 ? 1 : 0;
       celle = List.filled(9, '-1');
+      resetDB();
     });
   }
 
@@ -128,15 +156,19 @@ class _TrisState extends State<Tris> {
         if (checkWinner(currentPlayertoString())) {
           won = true;
 
+          updateDB();
+
           controller.play();
           Future.delayed(const Duration(seconds: 3), () {
             controller.stop();
+
             restartGame();
           });
         } else {
           won = false;
           // Cambia il giocatore corrente
           currentPlayer = (currentPlayer + 1) % 2;
+          updateDB();
         }
       });
     }
