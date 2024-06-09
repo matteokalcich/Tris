@@ -2,7 +2,6 @@ import 'package:confetti/confetti.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql_client/mysql_client.dart';
-import 'package:http/http.dart' as http;
 
 // La homepage dell'app che contiene la griglia di gioco
 class Tris extends StatefulWidget {
