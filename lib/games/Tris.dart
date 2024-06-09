@@ -38,8 +38,6 @@ class _TrisState extends State<Tris> {
   void startGame() {
     celle = List.filled(9, '-1'); // Inizializza tutte le celle con '-1'
     currentPlayer = 0; // Inizia con il giocatore 'O'
-
-    //createRecord();
     createConnection();
   }
 
@@ -60,6 +58,10 @@ class _TrisState extends State<Tris> {
       "INSERT INTO prova (cella, nome) VALUES (${celle[0]}, 'X')",
     );
     print('Inserted row id=${result.lastInsertID}');
+  }
+
+  void makeQuery(String query) async {
+    await pool.execute(query);
   }
 
   void createRecord() async {
