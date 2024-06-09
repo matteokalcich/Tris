@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tris/Home.dart';
 
 import 'games/Tris.dart';
 
@@ -28,7 +29,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Tris(),
+      routes: {
+        //'/': (context) => const Home(),
+        '/tris': (context) => const Tris(),
+      },
+      home: Home(),
     );
   }
 }
