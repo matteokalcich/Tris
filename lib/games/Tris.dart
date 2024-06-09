@@ -1,7 +1,8 @@
-
 import 'package:confetti/confetti.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:mysql_client/mysql_client.dart';
+import 'package:http/http.dart' as http;
 
 // La homepage dell'app che contiene la griglia di gioco
 class Tris extends StatefulWidget {
@@ -25,6 +26,8 @@ class _TrisState extends State<Tris> {
 
   final dbReference = FirebaseDatabase.instance.ref();
 
+  late final pool;
+
   @override
   void initState() {
     super.initState();
@@ -36,11 +39,30 @@ class _TrisState extends State<Tris> {
     celle = List.filled(9, '-1'); // Inizializza tutte le celle con '-1'
     currentPlayer = 0; // Inizia con il giocatore 'O'
 
-    createRecord();
+    //createRecord();
+    createConnection();
+  }
+
+  void createConnection() async {
+    pool = MySQLConnectionPool(
+      host: 'srv',
+      port: 3306,
+      userName: 'mat',
+      password: '12345',
+      maxConnections: 100,
+      databaseName: 'trisDB', // optional,
+      secure: false,
+    );
+  }
+
+  void createQuery() async {
+    var result = await pool.execute(
+      "INSERT INTO prova (cella, nome) VALUES (${celle[0]}, 'X')",
+    );
+    print('Inserted row id=${result.lastInsertID}');
   }
 
   void createRecord() async {
-
     try {
       Map<String, dynamic> cellsData = {};
       for (int i = 0; i < celle.length; i++) {
@@ -60,7 +82,6 @@ class _TrisState extends State<Tris> {
         cellsData['cella $i'] = celle[i];
       }
       await dbReference.child("tris").set(cellsData);
-
     } catch (e) {
       print("Record non aggiunto: $e");
     }
@@ -74,7 +95,6 @@ class _TrisState extends State<Tris> {
         cellsData['cella $i'] = celle[i];
       }
       await dbReference.child("tris").set(cellsData);
-
     } catch (e) {
       print("Record non aggiunto: $e");
     }
@@ -156,6 +176,8 @@ class _TrisState extends State<Tris> {
 
           updateDB();
 
+          createQuery();
+
           controller.play();
           Future.delayed(const Duration(seconds: 3), () {
             controller.stop();
@@ -167,6 +189,7 @@ class _TrisState extends State<Tris> {
           // Cambia il giocatore corrente
           currentPlayer = (currentPlayer + 1) % 2;
           updateDB();
+          createQuery();
         }
       });
     }
@@ -243,7 +266,7 @@ class _TrisState extends State<Tris> {
           ),
           child: Column(
             mainAxisAlignment:
-            MainAxisAlignment.start, // per poszionare la tabella al centro
+                MainAxisAlignment.start, // per poszionare la tabella al centro
 
             children: [
               const SizedBox(
