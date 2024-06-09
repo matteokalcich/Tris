@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:confetti/confetti.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -36,19 +35,18 @@ class _TrisState extends State<Tris> {
   void startGame() {
     celle = List.filled(9, '-1'); // Inizializza tutte le celle con '-1'
     currentPlayer = 0; // Inizia con il giocatore 'O'
-    print('Tutto pronto');
+
     createRecord();
   }
 
   void createRecord() async {
-    print('Sono dentro');
+
     try {
       Map<String, dynamic> cellsData = {};
       for (int i = 0; i < celle.length; i++) {
         cellsData['cella $i'] = celle[i];
       }
       await dbReference.child("tris").set(cellsData);
-      print("Record added successfully");
     } catch (e) {
       print("Failed to add record: $e");
     }
@@ -62,7 +60,7 @@ class _TrisState extends State<Tris> {
         cellsData['cella $i'] = celle[i];
       }
       await dbReference.child("tris").set(cellsData);
-      print("Record aggiunto");
+
     } catch (e) {
       print("Record non aggiunto: $e");
     }
@@ -76,7 +74,7 @@ class _TrisState extends State<Tris> {
         cellsData['cella $i'] = celle[i];
       }
       await dbReference.child("tris").set(cellsData);
-      print("Record aggiunto");
+
     } catch (e) {
       print("Record non aggiunto: $e");
     }
@@ -245,7 +243,7 @@ class _TrisState extends State<Tris> {
           ),
           child: Column(
             mainAxisAlignment:
-                MainAxisAlignment.start, // per poszionare la tabella al centro
+            MainAxisAlignment.start, // per poszionare la tabella al centro
 
             children: [
               const SizedBox(
